@@ -1,9 +1,11 @@
-import { drizzle } from "drizzle-orm/better-sqlite3";
-import { migrate } from "drizzle-orm/better-sqlite3/migrator";
-import Database from "better-sqlite3";
+import { drizzle } from "drizzle-orm/libsql";
+import { migrate } from "drizzle-orm/libsql/migrator";
+import { createClient } from "@libsql/client";
 
-const sqlite = new Database("sqlite.db");
-const db = drizzle(sqlite);
+const libsql = createClient({
+  url: "file:sqlite.db",
+});
+const db = drizzle(libsql);
 
 // this will automatically run needed migrations on the database
 migrate(db, { migrationsFolder: "./drizzle" });

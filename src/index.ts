@@ -1,12 +1,14 @@
-import Database from "better-sqlite3";
-import { drizzle } from "drizzle-orm/better-sqlite3";
+import { createClient } from "@libsql/client";
+import { drizzle } from "drizzle-orm/libsql";
 import { users } from "./schema";
 
-const sqlite = new Database("./sqlite.db");
-const db = drizzle(sqlite);
+const libsql = createClient({
+  url: "file:sqlite.db",
+});
+const db = drizzle(libsql);
 
 async function seed(database: typeof db) {
-  const { changes } = await database
+  const { rowsAffected } = await database
     .insert(users)
     .values([
       {
@@ -15,7 +17,7 @@ async function seed(database: typeof db) {
     ])
     .run();
 
-  console.log(`>> seeded users: ${changes}`);
+  console.log(`>> seeded users: ${rowsAffected}`);
 }
 
 async function query(database: typeof db) {
