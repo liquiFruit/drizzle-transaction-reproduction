@@ -9,7 +9,7 @@ npm run migrate
 npm run dev
 ```
 
-## Output
+## Output when using `await`
 
 ```
 state before transaction:
@@ -21,7 +21,7 @@ state after transaction:
 [ { id: 1, fullName: 'User_1698843448743' } ]
 ```
 
-## Expected Output
+## Output when calling syncronisly
 
 ```
 state before transaction:

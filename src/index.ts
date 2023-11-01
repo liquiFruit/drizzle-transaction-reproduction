@@ -5,8 +5,8 @@ import { users } from "./schema";
 const sqlite = new Database("./sqlite.db");
 const db = drizzle(sqlite);
 
-async function seed(database: typeof db) {
-  const { changes } = await database
+function seed(database: typeof db) {
+  const { changes } = database
     .insert(users)
     .values([
       {
@@ -15,26 +15,28 @@ async function seed(database: typeof db) {
     ])
     .run();
 
-  console.log(`>> seeded users: ${changes}`);
+  const insertedUser = database.select().from(users).get();
+
+  console.log(`>> seeded users: ${changes}, ${insertedUser.fullName}`);
 }
 
-async function query(database: typeof db) {
-  const allUsersAndProjects = await database.select().from(users).all();
+function query(database: typeof db) {
+  const allUsersAndProjects = database.select().from(users).all();
   console.log(allUsersAndProjects);
 }
 
 async function transact() {
   // clear db
-  await db.delete(users).run();
+  db.delete(users).run();
 
   // query before transaction
   console.log("state before transaction:");
-  await query(db);
+  query(db);
 
   try {
-    await db.transaction(async (tx) => {
+    db.transaction((tx) => {
       // add a user
-      await seed(tx);
+      seed(tx);
 
       // rollback user addition
       console.log(">> rolling back...");
@@ -46,7 +48,7 @@ async function transact() {
 
   // query after
   console.log("state after transaction:");
-  await query(db);
+  query(db);
 }
 
 transact();
