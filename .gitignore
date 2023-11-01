@@ -1,2 +1,5 @@
 sqlite.db
+drizzle
 node_modules/
+package-lock.json
+pnpm-lock.yaml
